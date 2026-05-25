@@ -1,0 +1,63 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+
+.score-card {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 16px 20px; background: #fff; color: #1a1a2e;
+}
+.client-name {
+  font-size: 14px; font-weight: 700; color: #1a1a2e;
+  margin-bottom: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.axes-container { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.axis-row { display: flex; align-items: center; gap: 10px; }
+.axis-label {
+  width: 100px; font-size: 11px; font-weight: 600; color: #6b7280;
+  display: flex; align-items: center; gap: 5px; flex-shrink: 0;
+}
+.axis-badge {
+  width: 18px; height: 18px; border-radius: 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.badge-s { background: #7c3aed; }
+.badge-f { background: #2563eb; }
+.badge-v { background: #e11d48; }
+.badge-m { background: #059669; }
+.bar-track { flex: 1; height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 5px; transition: width 0.4s ease; }
+.fill-s { background: #7c3aed; }
+.fill-f { background: #2563eb; }
+.fill-v { background: #e11d48; }
+.fill-m { background: #059669; }
+.axis-value { width: 32px; font-size: 11px; font-weight: 700; color: #4b5563; text-align: right; flex-shrink: 0; }
+.score-section {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 12px; border-top: 1px solid #f0f0f0;
+}
+.score-pill {
+  display: flex; align-items: center; justify-content: center;
+  width: 52px; height: 36px; border-radius: 8px;
+  font-size: 18px; font-weight: 900; color: #fff;
+}
+.classification-tag { font-size: 12px; font-weight: 700; padding: 4px 14px; border-radius: 20px; }
+.class-premium  { background: #ecfdf5; color: #047857; }
+.class-healthy  { background: #f0fdf4; color: #16a34a; }
+.class-watch    { background: #fefce8; color: #a16207; }
+.class-risk     { background: #fff7ed; color: #ea580c; }
+.class-critical { background: #fef2f2; color: #dc2626; }
+.score-1, .score-2 { background: #dc2626; }
+.score-3 { background: #ea580c; }
+.score-4 { background: #f59e0b; }
+.score-5 { background: #eab308; }
+.score-6 { background: #84cc16; }
+.score-7 { background: #22c55e; }
+.score-8 { background: #10b981; }
+.score-9 { background: #059669; }
+.score-10 { background: #047857; }
+.no-data {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; font-size: 13px; color: #9ca3af; font-style: italic;
+}

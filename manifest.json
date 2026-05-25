@@ -1,0 +1,25 @@
+{
+  "name": "Score Relacional",
+  "organization": "Planejamento Comercial",
+  "description": "Card visual do Score Relacional com barras por eixo e classificação dinâmica.",
+  "logoUrl": "",
+  "organizationUrl": "",
+  "supportUrl": "",
+  "privacyPolicyUrl": "",
+  "termsOfServiceUrl": "",
+  "packageUrl": "",
+  "devMode": true,
+  "components": [
+    {
+      "id": "scoreRelacionalCard",
+      "name": "Score Relacional Card",
+      "description": "Exibe os 4 eixos do score relacional como barras visuais + score final + classificação.",
+      "iconUrl": "",
+      "resource": {
+        "js": "scoreCard.js",
+        "config": "scoreCard.json",
+        "css": "scoreCard.css"
+      }
+    }
+  ]
+}
