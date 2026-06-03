@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Score Relacional — Metodologia</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: #ffffff;
+    color: #1a1a2e;
+    display: flex;
+    justify-content: center;
+    padding: 48px 24px;
+  }
+  .page { width: 1200px; display: flex; flex-direction: column; gap: 28px; }
+
+  /* EXECUTIVE SUMMARY */
+  .executive {
+    text-align: center;
+    padding: 0 60px 20px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .executive h1 {
+    font-size: 26px; font-weight: 800; color: #1a1a2e;
+    letter-spacing: -0.02em; margin-bottom: 10px;
+  }
+  .executive .tagline {
+    font-size: 15px; color: #4b5563; line-height: 1.6; max-width: 800px; margin: 0 auto;
+  }
+
+  /* SECTION HEADERS */
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: #9ca3af; margin-bottom: 6px;
+  }
+  .section-intro {
+    font-size: 13px; color: #6b7280; margin-bottom: 20px; line-height: 1.55;
+  }
+
+  /* CARDS */
+  .card {
+    background: #ffffff;
+    border: none;
+    border-radius: 14px;
+    padding: 28px 32px;
+    box-shadow: none;
+  }
+
+  /* AXES */
+  .axes-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+  .axis-card {
+    border-radius: 12px; padding: 22px 22px 20px;
+    border: 1px solid #e8eaed; position: relative; overflow: hidden;
+  }
+  .axis-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+  }
+  .ax-s::before { background: #7c3aed; }
+  .ax-f::before { background: #2563eb; }
+  .ax-v::before { background: #e11d48; }
+  .ax-m::before { background: #059669; }
+  .axis-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .axis-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #9ca3af; }
+  .axis-badge { font-size: 9px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+  .axis-letter { font-size: 30px; font-weight: 900; line-height: 1; margin-bottom: 2px; }
+  .ax-s .axis-letter { color: #7c3aed; }
+  .ax-f .axis-letter { color: #2563eb; }
+  .ax-v .axis-letter { color: #e11d48; }
+  .ax-m .axis-letter { color: #059669; }
+  .axis-name { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-bottom: 10px; }
+  .axis-question { font-size: 12px; color: #6b7280; font-style: italic; margin-bottom: 14px; line-height: 1.4; }
+  .axis-body { font-size: 11.5px; color: #4b5563; line-height: 1.6; }
+  .axis-body strong { color: #1a1a2e; }
+  .axis-body .example { display: block; margin-top: 8px; padding: 6px 10px; background: #f9fafb; border-radius: 6px; border: 1px solid #f0f0f0; font-size: 11px; color: #6b7280; }
+
+  /* FORMULA */
+  .formula-section { display: flex; flex-direction: column; gap: 18px; align-items: stretch; }
+  .formula-box { flex: 1; background: #fafbfc; border: 1px solid #e8eaed; border-radius: 12px; padding: 22px 24px; display: flex; flex-direction: column; justify-content: center; }
+  .formula-title { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #9ca3af; margin-bottom: 14px; }
+  .formula-expr { font-size: 19px; font-weight: 700; text-align: center; line-height: 2; }
+  .formula-expr .s { color: #7c3aed; }
+  .formula-expr .f { color: #2563eb; }
+  .formula-expr .v { color: #e11d48; }
+  .formula-expr .m { color: #059669; }
+  .formula-expr .op { color: #b0b0b0; font-weight: 400; }
+  .formula-footnote { font-size: 11px; color: #9ca3af; text-align: center; margin-top: 10px; line-height: 1.5; }
+
+  /* SCALE */
+  .scale-bar { display: flex; gap: 3px; height: 46px; margin-bottom: 14px; }
+  .scale-cell { flex: 1; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 800; color: #fff; }
+  .sc-1 { background: #dc2626; } .sc-2 { background: #e04040; } .sc-3 { background: #ea580c; }
+  .sc-4 { background: #f59e0b; } .sc-5 { background: #eab308; } .sc-6 { background: #84cc16; }
+  .sc-7 { background: #22c55e; } .sc-8 { background: #10b981; } .sc-9 { background: #059669; } .sc-10 { background: #047857; }
+  .zones { display: flex; justify-content: space-between; gap: 6px; }
+  .zone { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 6px 0; border-radius: 6px; text-align: center; flex: 1; }
+  .z-critical { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .z-risk { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; }
+  .z-watch { background: #fefce8; color: #a16207; border: 1px solid #fde68a; }
+  .z-healthy { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+  .z-premium { background: #ecfdf5; color: #047857; border: 1px solid #6ee7b7; }
+
+  /* DECAY */
+  .decay-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .decay-card { border: 1px solid #e8eaed; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .decay-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #f59e0b; }
+  .decay-title { font-size: 13px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; }
+  .decay-body { font-size: 12px; color: #4b5563; line-height: 1.6; }
+  .decay-body strong { color: #1a1a2e; }
+  .decay-table { width: 100%; font-size: 12px; border-collapse: collapse; margin-top: 10px; }
+  .decay-table td { padding: 6px 8px; text-align: center; }
+  .decay-table tr:first-child td { font-weight: 700; color: #6b7280; border-bottom: 1px solid #e8eaed; }
+
+  /* METHODOLOGY */
+  .method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .method-box { background: #fafbfc; border: 1px solid #e8eaed; border-radius: 10px; padding: 20px 22px; }
+  .method-title { font-size: 12px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; }
+  .method-body { font-size: 12px; color: #4b5563; line-height: 1.6; }
+  .method-body a { color: #2563eb; text-decoration: none; }
+  .method-body a:hover { text-decoration: underline; }
+  .ref-list { margin-top: 8px; padding-left: 0; list-style: none; }
+  .ref-list li { margin-bottom: 5px; font-size: 11px; color: #6b7280; }
+  .ref-list li a { color: #2563eb; }
+
+  .footer { text-align: center; padding: 8px 0; font-size: 10px; color: #b0b0b0; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- EXECUTIVE SUMMARY -->
+  <div class="executive">
+    <h1>Score Relacional</h1>
+    <p class="tagline">Índice de saúde do relacionamento comercial com cada cliente. Nota de 1 a 10 que combina estabilidade, frequência, valor e tendência — ajustada automaticamente quando o cliente se ausenta. Orienta decisões de retenção, expansão e recuperação.</p>
+  </div>
+
+  <!-- SECTION 1: OS 4 EIXOS -->
+  <div class="card">
+    <div class="section-label">Os quatro eixos</div>
+    <div class="section-intro">Cada eixo mede uma dimensão independente da saúde do cliente. Todos variam de 0 a 100. O score final combina os quatro numa nota de 1 a 10.</div>
+    <div class="axes-row">
+
+      <div class="axis-card ax-s">
+        <div class="axis-top"><div class="axis-tag">Eixo 1</div><div class="axis-badge">Peso 30%</div></div>
+        <div class="axis-letter">S</div>
+        <div class="axis-name">Estabilidade</div>
+        <div class="axis-question">"Há quanto tempo esse cliente está sem interrupção?"</div>
+        <div class="axis-body">
+          Conta os <strong>meses consecutivos com receita</strong>, de trás pra frente. Um mês sem pagamento quebra a sequência. O valor é a posição relativa do cliente na base: se ele tem mais meses seguidos que 80% dos clientes, S = 80.
+          <span class="example">Ex: 36 meses seguidos → S = 95 (top 5% da base)</span>
+        </div>
+      </div>
+
+      <div class="axis-card ax-f">
+        <div class="axis-top"><div class="axis-tag">Eixo 2</div><div class="axis-badge">Peso 20%</div></div>
+        <div class="axis-letter">F</div>
+        <div class="axis-name">Frequência</div>
+        <div class="axis-question">"Qual proporção do tempo de vida ele esteve ativo?"</div>
+        <div class="axis-body">
+          <strong>Meses ativos / tempo de conta.</strong> Mede consistência ao longo de toda a história, normalizado pelo tempo pra não penalizar quem é novo.
+          <span class="example">Ex: ativo 18 de 24 meses → F = 75</span>
+        </div>
+      </div>
+
+      <div class="axis-card ax-v">
+        <div class="axis-top"><div class="axis-tag">Eixo 3</div><div class="axis-badge">Peso 30%</div></div>
+        <div class="axis-letter">V</div>
+        <div class="axis-name">Valor</div>
+        <div class="axis-question">"Quanto esse cliente representa em receita?"</div>
+        <div class="axis-body">
+          <strong>Receita média mensal</strong> comparada com toda a base. Se o cliente gera mais receita que 90% dos demais, V = 90.
+          <span class="example">Ex: R$5.000/mes → V = 92 (top 8%)</span>
+        </div>
+      </div>
+
+      <div class="axis-card ax-m">
+        <div class="axis-top"><div class="axis-tag">Eixo 4</div><div class="axis-badge">Peso 20%</div></div>
+        <div class="axis-letter">M</div>
+        <div class="axis-name">Momentum</div>
+        <div class="axis-question">"A receita está crescendo ou caindo?"</div>
+        <div class="axis-body">
+          Compara a <strong>receita média dos últimos 6 meses</strong> com os 6 meses anteriores. Crescendo = alto, caindo = baixo, estável = meio. Clientes com menos de 12 meses recebem M = 50 (neutro).
+          <span class="example">Ex: receita subiu 30% → M = 80</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 2: FORMULA + ESCALA + DECAIMENTO -->
+  <div class="card">
+    <div class="section-label">Cálculo, escala e ajuste por presença</div>
+    <div class="formula-section">
+
+      <div class="formula-box">
+        <div class="formula-title">Fórmula base</div>
+        <div class="formula-expr">
+          (<span class="s">S</span><span class="op"> x </span>0,30
+          <span class="op"> + </span>
+          <span class="f">F</span><span class="op"> x </span>0,20
+          <span class="op"> + </span>
+          <span class="v">V</span><span class="op"> x </span>0,30
+          <span class="op"> + </span>
+          <span class="m">M</span><span class="op"> x </span>0,20)<br>
+          <span class="op">/ </span>100<span class="op"> x </span>9<span class="op"> + </span>1
+        </div>
+        <div class="formula-footnote">
+          Cada eixo varia de 0 a 100. A divisão por 100 normaliza pra 0-1.<br>
+          O <strong>x 9 + 1</strong> converte pra escala humana: 0 vira 1, 100 vira 10.
+        </div>
+      </div>
+
+      <div class="formula-box">
+        <div class="formula-title">Ajuste por presença</div>
+        <div class="formula-expr" style="font-size:16px;">
+          Score Final<span class="op"> = </span>Score Base<span class="op"> x </span>Fator
+        </div>
+        <div class="formula-footnote">
+          O fator de presença penaliza clientes ausentes progressivamente.<br>
+          Clientes ativos no último mês completo: fator = 1.0 (sem penalização).
+        </div>
+        <table class="decay-table" style="margin-top:12px;">
+          <tr>
+            <td>Meses fora</td><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6+</td>
+          </tr>
+          <tr>
+            <td style="font-weight:700; color:#6b7280;">Fator</td>
+            <td style="color:#047857; font-weight:700;">1.00</td>
+            <td style="color:#16a34a;">0.95</td>
+            <td style="color:#84cc16;">0.85</td>
+            <td style="color:#eab308;">0.70</td>
+            <td style="color:#f59e0b;">0.55</td>
+            <td style="color:#ea580c;">0.35</td>
+            <td style="color:#dc2626;">0.10</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="formula-box scale-box">
+        <div class="formula-title">Escala final</div>
+        <div class="scale-bar">
+          <div class="scale-cell sc-1">1</div><div class="scale-cell sc-2">2</div><div class="scale-cell sc-3">3</div>
+          <div class="scale-cell sc-4">4</div><div class="scale-cell sc-5">5</div><div class="scale-cell sc-6">6</div>
+          <div class="scale-cell sc-7">7</div><div class="scale-cell sc-8">8</div><div class="scale-cell sc-9">9</div><div class="scale-cell sc-10">10</div>
+        </div>
+        <div class="zones">
+          <div class="zone z-critical">1-3<br>Crítico</div>
+          <div class="zone z-risk">3-5<br>Risco</div>
+          <div class="zone z-watch">5-7<br>Atenção</div>
+          <div class="zone z-healthy">7-8.5<br>Saudável</div>
+          <div class="zone z-premium">8.5-10<br>Premium</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 3: DECAIMENTO — DETALHAMENTO -->
+  <div class="card">
+    <div class="section-label">Fator de presença — por que e como o score decai</div>
+    <div class="decay-row">
+
+      <div class="decay-card">
+        <div class="decay-title">Por que o score cai com a ausência</div>
+        <div class="decay-body">
+          O score base mede a qualidade histórica do relacionamento. Mas um cliente que saiu há 6 meses não pode ter o mesmo score de um que está ativo agora — a <strong>janela de recuperação fecha com o tempo</strong>.<br><br>
+          O decaimento transforma o score de um retrato do passado num <strong>indicador acionável do presente</strong>: quanto mais tempo fora, menor a chance de retorno, menor o score.
+        </div>
+      </div>
+
+      <div class="decay-card">
+        <div class="decay-title">Por que o início é suave</div>
+        <div class="decay-body">
+          Em receita recorrente B2B imobiliária, <strong>1 mês de ausência pode ser apenas atraso administrativo</strong>. A curva dá 1 mês de tolerância (fator 0.95), depois acelera a partir do 2º mês.<br><br>
+          Isso evita alarmes falsos e garante que a partir do 3º mês a queda é significativa o suficiente pra acionar o comercial.
+        </div>
+      </div>
+
+      <div class="decay-card">
+        <div class="decay-title">O que o score NÃO significa para ausentes</div>
+        <div class="decay-body">
+          <strong>Score caindo não significa que o cliente está fazendo algo errado.</strong> Ele simplesmente não está lá. O decaimento comunica: "a janela de recuperação está fechando."<br><br>
+          O score mede a <strong>oportunidade de ação do comercial</strong>, não a culpa do cliente. A penalização é temporal, não comportamental.
+        </div>
+      </div>
+
+      <div class="decay-card">
+        <div class="decay-title">Exemplo: cliente score 8.4 que parou</div>
+        <div class="decay-body">
+          <table class="decay-table">
+            <tr>
+              <td>Situação</td><td>Ativo</td><td>+1m</td><td>+2m</td><td>+3m</td><td>+6m</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600; color:#6b7280;">Score</td>
+              <td style="color:#047857; font-weight:600;">8.4</td>
+              <td style="color:#16a34a;">8.0</td>
+              <td style="color:#84cc16;">7.1</td>
+              <td style="color:#eab308;">5.9</td>
+              <td style="color:#dc2626;">1.0</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600; color:#6b7280;">Ação</td>
+              <td>—</td><td>Monitorar</td><td>Contatar</td><td>Recuperar</td><td>Win-back</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 4: SALVAGUARDAS -->
+  <div class="card">
+    <div class="section-label">Salvaguardas do modelo</div>
+    <div class="decay-row">
+      <div class="decay-card" style="border-left-color:#7c3aed;">
+        <div class="decay-title">Clientes novos (menos de 6 meses)</div>
+        <div class="decay-body">Score máximo limitado a 6.0 independente dos eixos. Classificação: "Novo". O cliente precisa provar consistência antes de ser considerado Premium ou Saudável.</div>
+      </div>
+      <div class="decay-card" style="border-left-color:#2563eb;">
+        <div class="decay-title">Momentum neutro (menos de 12 meses)</div>
+        <div class="decay-body">Sem histórico de 6-12 meses atrás, o eixo M é fixado em 50 (neutro). O cliente não é inflado nem penalizado por falta de dados.</div>
+      </div>
+      <div class="decay-card" style="border-left-color:#e11d48;">
+        <div class="decay-title">Percentis relativos à base ativa</div>
+        <div class="decay-body">Estabilidade e Valor usam a posição relativa na base inteira. Isso garante distribuição uniforme e se adapta automaticamente quando a base muda.</div>
+      </div>
+      <div class="decay-card" style="border-left-color:#059669;">
+        <div class="decay-title">Referência temporal: último mês completo</div>
+        <div class="decay-body">O score só penaliza ausência após o fechamento do mês. O cliente pode pagar até o último dia — só é considerado ausente a partir do 1º dia do mês seguinte.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: FUNDAMENTACAO -->
+  <div class="card">
+    <div class="section-label">Fundamentação e referências</div>
+    <div class="method-grid">
+
+      <div class="method-box">
+        <div class="method-title">O que é o método RFM</div>
+        <div class="method-body">
+          RFM (Recency, Frequency, Monetary) é uma técnica de segmentação de clientes usada há décadas em marketing direto, e-commerce e CRM. Classifica clientes por três comportamentos: quando comprou pela última vez, com que frequência compra, e quanto gasta. É a base de sistemas de scoring em empresas como Amazon, Shopify, Klaviyo, Hubspot e Salesforce.
+        </div>
+      </div>
+
+      <div class="method-box">
+        <div class="method-title">O que adaptamos pro nosso contexto</div>
+        <div class="method-body">
+          Em receita recorrente B2B (planos mensais de corretores e imobiliárias), "última compra" não faz sentido — o cliente paga todo mês. Substituímos Recência por <strong>Estabilidade</strong> (meses consecutivos) e adicionamos <strong>Momentum</strong> (tendência) e <strong>Fator de Presença</strong> (decaimento por ausência). Mantivemos Frequência e Valor com normalização por percentil.
+        </div>
+      </div>
+
+      <div class="method-box">
+        <div class="method-title">Por que percentis e não cortes fixos</div>
+        <div class="method-body">
+          Cortes fixos (ex: "20+ meses = nível 3") concentram a maioria dos clientes em poucos grupos. Percentis distribuem uniformemente: cada cliente tem uma posição precisa relativa à base inteira. Isso garante que o score diferencia clientes de verdade.
+        </div>
+      </div>
+
+      <div class="method-box">
+        <div class="method-title">Referências verificáveis</div>
+        <div class="method-body">
+          <ul class="ref-list">
+            <li><a href="https://en.wikipedia.org/wiki/RFM_(market_research)" target="_blank">Wikipedia — RFM (market research)</a> — definição, história e aplicação do modelo</li>
+            <li><a href="https://clevertap.com/blog/rfm-analysis/" target="_blank">CleverTap — RFM Analysis & Score Calculation</a> — pesos diferenciados e contexto B2B</li>
+            <li><a href="https://www.shopify.com/blog/rfm-analysis" target="_blank">Shopify — RFM Analysis Best Practices (2025)</a> — quintis e segmentação prática</li>
+            <li><a href="https://learn.g2.com/rfm-analysis" target="_blank">G2 — RFM for B2B Product Sellers</a> — aplicação em ciclos longos e receita recorrente</li>
+            <li><a href="https://help.klaviyo.com/hc/en-us/articles/17797937793179" target="_blank">Klaviyo — RFM Scoring & Customer Groups</a> — implementação real com percentis</li>
+            <li><a href="https://link.springer.com/article/10.1007/s10997-018-9447-3" target="_blank">Springer — RFM for B2B Services (2019)</a> — extensão do RFM com estabilidade em contexto industrial</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    Score Relacional · Planejamento Comercial · Atualização mensal automática via BigQuery
+  </div>
+
+</div>
+</body>
+</html>
